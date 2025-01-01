@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Tracker</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="text-center">Movie Tracker</h1>
+
+        <!-- Movies Watched Section -->
+        <h3>Movies Watched</h3>
+        <div class="panel-group mt-4 p-3 border rounded" id = "accordionWatched">
+            {% for movie in watched %}
+            <div class ="panel panel-default mt-2">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordionWatched" href="#collapseWatched{{ loop.index }}" class="d-block p-3 text-decoration-none rounded" style="background-color: #f8f9fa; border: 1px solid #ddd; color: #212529;">
+                            {{ movie[1] }} ({{ movie[2] }}) 
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseWatched{{ loop.index }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p><strong>Description:</strong> {{ movie[3] }}</p>
+                        <p><strong>Progress:</strong> <span class="badge bg-info">{{ movie[5] }}%</span></p>     
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Movies Watching Section -->
+        <h3>Movies Watching</h3>
+        <div class="panel-group mt-4 p-3 border rounded" id = "accordionWatching">
+            {% for movie in watching %}
+            <div class ="panel panel-default mt-2">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordionWatching" href="#collapseWatching{{ loop.index }}" class="d-block p-3 text-decoration-none rounded" style="background-color: #f8f9fa; border: 1px solid #ddd; color: #212529;">
+                            {{ movie[1] }} ({{ movie[2] }}) 
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseWatching{{ loop.index }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p><strong>Description:</strong> {{ movie[3] }}</p>
+                        <p><strong>Progress:</strong> <span class="badge bg-info">{{ movie[5] }}%</span></p>     
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Movies To Watch Section -->
+        <h3>Movies To Watch</h3>
+        <div class="panel-group mt-4 p-3 border rounded" id = "accordionToWatch">
+            {% for movie in to_watch %}
+            <div class ="panel panel-default mt-2">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordionToWatch" href="#collapseToWatch{{ loop.index }}" class="d-block p-3 text-decoration-none rounded" style="background-color: #f8f9fa; border: 1px solid #ddd; color: #212529;">
+                            {{ movie[1] }} ({{ movie[2] }}) 
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseToWatch{{ loop.index }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p><strong>Description:</strong> {{ movie[3] }}</p>
+                        <p><strong>Progress:</strong> <span class="badge bg-info">{{ movie[5] }}%</span></p>  
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Get Movie Recommendations Section -->
+        <div class="mb-4">
+            <h3>Get Movie Recommendations</h3>
+            <form id="recommendationForm" action="/movie_recommendation" method="POST">
+                <div class="form-group">
+                    <label for="genre">Genre:</label>
+                    <input type="text" class="form-control" id="genre" name="genre" placeholder="e.g., Action, Comedy, Drama" required>
+                </div>
+                <button type="submit" class="btn btn-success">Get Recommendations</button>
+            </form>
+
+            <!-- Display Recommendations -->
+            <div id="recommendations" class="mt-4">
+            </div>
+        </div>
+
+        <!-- Add New Movie Form -->
+        <div class="mb-4">
+            <h3>Add a New Movie</h3>
+            <form id="addMovieForm" action="/add_movie" method="POST">
+                <div class="form-group">
+                    <label for="title">Movie Title:</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="year">Year:</label>
+                    <input type="number" class="form-control" id="year" name="year" min ="1990">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea class="form-control" id="description" name="description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select class="form-control" id="status" name="status" required>
+                        <option value="watched">Watched</option>
+                        <option value="to_watch">To Watch</option>
+                        <option value="watching">Currently Watching</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="progress">Progress (0 to 100%):</label>
+                    <input type="number" class="form-control" id="progress" name="progress" min = "0" max="100">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Movie</button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // set the max year to the current year
+        const currentYear = new Date().getFullYear();
+        document.getElementById('year').setAttribute('max', currentYear);
+    </script>
+
+    <script>
+        document.getElementById("addMovieForm").addEventListener("submit", function(event) {
+            event.preventDefault();    // prevent reloading the page
+    
+            const formData = new FormData(this);    // collect form data
+    
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+    
+            const formUrlEncoded = new URLSearchParams(formObject).toString();
+            // Send POST request using fetch
+            fetch('/add_movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formUrlEncoded
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status =='success') {
+                    alert('Movie added successfully!');
+                    this.reset();
+                    window.location.href = '/'; 
+                } else {
+                    alert('Error adding movie');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error);
+            });
+        });
+    </script>
+
+<script>
+    document.getElementById("recommendationForm").addEventListener("submit", function(event) {
+        event.preventDefault();    // prevent reloading the page
+
+        const formData = new FormData(this);    // collect form data
+
+        const formObject = {};
+        formData.forEach((value, key) => {
+            formObject[key] = value;
+        });
+
+        const formUrlEncoded = new URLSearchParams(formObject).toString();
+
+        // Send POST request using fetch
+        fetch('/movie_recommendation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formUrlEncoded
+        })
+        .then(response => response.json())
+        .then(data => {
+            const recommendationsDiv = document.getElementById('recommendations');
+
+            if (data && data.length > 0) {
+                recommendationsDiv.innerHTML = `
+                    <h4>Recommended Movies:</h4>
+                    <ul class="list-group">
+                        ${data.map(movie => `
+                            <li class="list-group-item">
+                                <strong>${movie.title}</strong> (${movie.year})<br>
+                                <em>${movie.description}</em>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+            } else {
+                recommendationsDiv.innerHTML = `<p class="text-warning">No recommendations found. Try a different genre.</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error);
+        });
+    });
+</script>   
+    
+</body>
+</html>
